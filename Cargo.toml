@@ -1,0 +1,12 @@
+[package]
+name = "test_roulage"
+version = "0.1.0"
+authors = ["gasc <mayeul.gasc@orange.fr>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+librobot = {git="https://github.com/ClubRobotInsat/librobot", branch = "dev-new-pid"}
+heapless = "0.4.0"
+
