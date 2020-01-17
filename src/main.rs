@@ -17,10 +17,10 @@ fn normalize(cmd: &NavigationCommand, data: u16) -> u16 {
 }
 
 //Communication
-fn action(cmd: &NavigationCommand, data: u16, socket: &UdpSocket) {
+fn action(cmd: &NavigationCommand, data: u16, socket: &UdpSocket, cpt: u16) {
     let mut frame = NavigationFrame::default();
         //Reglage de la frame
-        frame.counter = 1;
+        frame.counter = cpt;
         frame.asserv_lin = true;
         frame.asserv_ang = true;
         frame.command = *cmd;
@@ -38,7 +38,6 @@ fn action(cmd: &NavigationCommand, data: u16, socket: &UdpSocket) {
             )
             .unwrap();
         println!("Done !");
-
 }
 
 fn main() {
@@ -48,16 +47,20 @@ fn main() {
     socket.connect("192.168.2.1:51").unwrap();
 
     //Pcq si on met pas dans une variable, ça plante...
-    let hd_mil = time::Duration::from_millis(100);
+    let hd_mil = time::Duration::from_millis(4000);
 
     loop {
-        action(&NavigationCommand::GoForward, 10, &socket);
+        action(&NavigationCommand::GoForward, 120, &socket, cpt);
+        cpt += 1;
         thread::sleep(hd_mil);
-        action(&NavigationCommand::GoBackward, 10, &socket);
+        action(&NavigationCommand::TurnRelative, 14000, &socket, cpt);
+        cpt += 1;
         thread::sleep(hd_mil);
-        action(&NavigationCommand::TurnAbsolute, 5000, &socket);
+        action(&NavigationCommand::GoForward, 90, &socket, cpt);
+        cpt += 1;
         thread::sleep(hd_mil);
-        action(&NavigationCommand::TurnAbsolute, 0, &socket);
+        action(&NavigationCommand::TurnRelative, 14000, &socket, cpt);
+        cpt += 1;
         thread::sleep(hd_mil);
     }
 }
