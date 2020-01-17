@@ -17,13 +17,13 @@ fn normalize(cmd: &NavigationCommand, data: u16) -> u16 {
 }
 
 //Communication
-fn action(cmd: &NavigationCommand, data: u16) {
+fn action(cmd: &NavigationCommand, data: u16, socket: &UdpSocket) {
     let mut frame = NavigationFrame::default();
         //Reglage de la frame
         frame.counter = 1;
         frame.asserv_lin = true;
         frame.asserv_ang = true;
-        frame.command = cmd;
+        frame.command = *cmd;
         frame.args_cmd1 = normalize(&cmd, data);
         frame.args_cmd2 = 0;
 
@@ -51,13 +51,13 @@ fn main() {
     let hd_mil = time::Duration::from_millis(100);
 
     loop {
-        action(NavigationCommand::GoForward, 10);
+        action(&NavigationCommand::GoForward, 10, &socket);
         thread::sleep(hd_mil);
-        action(NavigationCommand::GoBackward, 10);
+        action(&NavigationCommand::GoBackward, 10, &socket);
         thread::sleep(hd_mil);
-        action(NavigationCommand::TurnAbsolute, 5000);
+        action(&NavigationCommand::TurnAbsolute, 5000, &socket);
         thread::sleep(hd_mil);
-        action(NavigationCommand::TurnAbsolute, 0);
+        action(&NavigationCommand::TurnAbsolute, 0, &socket);
         thread::sleep(hd_mil);
     }
 }
